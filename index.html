@@ -6,7 +6,7 @@
 <title>Telinha</title>
 <meta name="description" content="Compartilhe a tela com os amigos. Sem conta, só um código.">
 <meta property="og:title" content="Convite pro Telinha">
-<meta property="og:description" content="Clique pra entrar na sala: abre no Telinha ou assiste pelo navegador.">
+<meta property="og:description" content="Clique pra entrar na sala pelo Telinha.">
 <meta property="og:image" content="https://anonima21q.github.io/TELINHA/icon.png">
 <meta name="theme-color" content="#ff7a45">
 <link rel="icon" href="icon.png">
@@ -43,9 +43,9 @@
     <div id="code" class="code"></div>
     <div class="btns">
       <a id="open-app" class="btn primary" href="#">Abrir no Telinha</a>
-      <a id="open-web" class="btn" href="#">Assistir pelo navegador</a>
+      <a class="btn" href="https://github.com/ANONIMA21q/TELINHA/releases/latest">Baixar o Telinha (Windows)</a>
     </div>
-    <div id="hint" class="hint muted">Não tem o Telinha? <a href="https://github.com/ANONIMA21q/TELINHA/releases/latest">Baixar</a> ou assista pelo navegador.</div>
+    <div id="hint" class="hint muted">Não tem o Telinha? Baixe, instale e clique em "Abrir no Telinha" de novo.</div>
   </section>
 
   <section id="home" hidden>
@@ -53,10 +53,6 @@
     <div class="btns">
       <a class="btn primary" href="https://github.com/ANONIMA21q/TELINHA/releases/latest">Baixar o Telinha (Windows)</a>
     </div>
-    <form id="code-form">
-      <input id="code-input" placeholder="Código da sala" maxlength="14" autocomplete="off" spellcheck="false" aria-label="Código da sala">
-      <button class="btn" type="submit">Assistir</button>
-    </form>
   </section>
 
   <div class="foot muted">por Th.exe · 0x5448</div>
@@ -74,7 +70,6 @@
     document.title = 'Sala ' + fmt(code) + ' · Telinha';
     const app = document.getElementById('open-app');
     app.href = 'telinha://sala/' + code;
-    document.getElementById('open-web').href = 'sala/?s=' + code;
     app.addEventListener('click', () => {
       // se o Telinha abrir, a página perde o foco; se não, mostra a dica
       let left = false;
@@ -82,17 +77,11 @@
       window.addEventListener('blur', onBlur, { once: true });
       setTimeout(() => {
         window.removeEventListener('blur', onBlur);
-        if (!left) document.getElementById('hint').innerHTML = 'Não abriu? <a href="https://github.com/ANONIMA21q/TELINHA/releases/latest">Baixe o Telinha</a> ou <a href="sala/?s=' + code + '">assista pelo navegador</a>.';
+        if (!left) document.getElementById('hint').innerHTML = 'Não abriu? <a href="https://github.com/ANONIMA21q/TELINHA/releases/latest">Baixe o Telinha</a>, instale e tente de novo.';
       }, 2000);
     });
   } else {
     document.getElementById('home').hidden = false;
-    document.getElementById('code-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const c = norm(document.getElementById('code-input').value);
-      if (valid(c)) location.href = 'sala/?s=' + c;
-      else document.getElementById('code-input').focus();
-    });
   }
 </script>
 </body>
