@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telinha</title>
+<meta name="description" content="Compartilhe a tela com os amigos. Sem conta, só um código.">
+<meta property="og:title" content="Convite pro Telinha">
+<meta property="og:description" content="Clique pra entrar na sala: abre no Telinha ou assiste pelo navegador.">
+<meta property="og:image" content="https://anonima21q.github.io/TELINHA/icon.png">
+<meta name="theme-color" content="#ff7a45">
+<link rel="icon" href="icon.png">
+<style>
+  :root { --bg: #0e1117; --card: #151a23; --line: #2a3242; --text: #e8ecf3; --muted: #8b95a8; --accent: #ff7a45; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { display: grid; place-items: center; min-height: 100vh; padding: 24px 16px;
+    background: radial-gradient(60% 50% at 50% 30%, rgba(255,122,69,.16), transparent 70%), var(--bg); }
+  .card { width: min(420px, 100%); background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 28px 24px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+  .logo { width: 64px; height: 64px; color: var(--accent); }
+  h1 { margin: 6px 0 2px; font-size: 26px; }
+  .muted { color: var(--muted); }
+  .code { display: inline-block; margin: 14px 0 6px; padding: 8px 16px; border-radius: 12px; border: 1px dashed var(--line); font: 700 22px/1.2 ui-monospace, Consolas, monospace; letter-spacing: .08em; }
+  .btns { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .btn { display: block; padding: 13px 16px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--text); font: 600 15px system-ui, sans-serif; text-decoration: none; cursor: pointer; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn:hover { filter: brightness(1.08); }
+  .hint { margin-top: 14px; font-size: 13px; min-height: 1.5em; }
+  .hint a { color: var(--accent); }
+  form { display: flex; gap: 8px; margin-top: 16px; }
+  input { flex: 1; min-width: 0; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: #0b0e14; color: var(--text); font: 600 16px ui-monospace, Consolas, monospace; text-transform: uppercase; }
+  .foot { margin-top: 18px; font-size: 12px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="card">
+  <svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="8" width="40" height="27" rx="6" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M17 42h14M24 35v7" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><circle cx="24" cy="21.5" r="5" fill="currentColor"/></svg>
+  <h1>Telinha</h1>
+
+  <section id="invite" hidden>
+    <div class="muted">Você foi chamado pra sala</div>
+    <div id="code" class="code"></div>
+    <div class="btns">
+      <a id="open-app" class="btn primary" href="#">Abrir no Telinha</a>
+      <a id="open-web" class="btn" href="#">Assistir pelo navegador</a>
+    </div>
+    <div id="hint" class="hint muted">Não tem o Telinha? <a href="https://github.com/ANONIMA21q/TELINHA/releases/latest">Baixar</a> ou assista pelo navegador.</div>
+  </section>
+
+  <section id="home" hidden>
+    <div class="muted">Mostre sua tela pros amigos. Sem conta, só um código.</div>
+    <div class="btns">
+      <a class="btn primary" href="https://github.com/ANONIMA21q/TELINHA/releases/latest">Baixar o Telinha (Windows)</a>
+    </div>
+    <form id="code-form">
+      <input id="code-input" placeholder="Código da sala" maxlength="14" autocomplete="off" spellcheck="false" aria-label="Código da sala">
+      <button class="btn" type="submit">Assistir</button>
+    </form>
+  </section>
+
+  <div class="foot muted">por Th.exe · 0x5448</div>
+</main>
+<script>
+  const ALPHA = /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]+$/;
+  const norm = (c) => String(c || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const valid = (c) => (c.length === 6 || c.length === 12) && ALPHA.test(c);
+  const fmt = (c) => (c.length === 12 ? c.match(/.{4}/g).join('-') : c.slice(0, 3) + '-' + c.slice(3));
+  const q = new URLSearchParams(location.search);
+  const code = norm(q.get('s') || q.get('sala') || location.hash.slice(1));
+  if (valid(code)) {
+    document.getElementById('invite').hidden = false;
+    document.getElementById('code').textContent = fmt(code);
+    document.title = 'Sala ' + fmt(code) + ' · Telinha';
+    const app = document.getElementById('open-app');
+    app.href = 'telinha://sala/' + code;
+    document.getElementById('open-web').href = 'sala/?s=' + code;
+    app.addEventListener('click', () => {
+      // se o Telinha abrir, a página perde o foco; se não, mostra a dica
+      let left = false;
+      const onBlur = () => { left = true; };
+      window.addEventListener('blur', onBlur, { once: true });
+      setTimeout(() => {
+        window.removeEventListener('blur', onBlur);
+        if (!left) document.getElementById('hint').innerHTML = 'Não abriu? <a href="https://github.com/ANONIMA21q/TELINHA/releases/latest">Baixe o Telinha</a> ou <a href="sala/?s=' + code + '">assista pelo navegador</a>.';
+      }, 2000);
+    });
+  } else {
+    document.getElementById('home').hidden = false;
+    document.getElementById('code-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const c = norm(document.getElementById('code-input').value);
+      if (valid(c)) location.href = 'sala/?s=' + c;
+      else document.getElementById('code-input').focus();
+    });
+  }
+</script>
+</body>
+</html>
